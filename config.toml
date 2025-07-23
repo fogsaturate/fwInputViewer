@@ -1,0 +1,26 @@
+[general]
+width = 575
+height = 800
+custom_texture = false
+trail_speed = 400
+trail_width = 50
+trail_offset = -1 # 1 = starts at top, 0 = starts in the middle, -1 = starts at the bottom
+
+[colors]
+green_fret = "#00ff00"
+red_fret = "#ff0000"
+yellow_fret = "#ffff00"
+blue_fret = "#0050ff"
+orange_fret = "#ff8200"
+
+# For bindings, please check https://hardwaretester.com/gamepad to put in your bindings!
+[bindings]
+controller_id = 0
+dpad_axis = true # This setting should only be false if you are on a raphnet, or another HID joystick adapter
+green_binding = 0
+red_binding = 1
+yellow_binding = 4
+blue_binding = 3
+orange_binding = 6
+strum_up_binding = 12
+strum_down_binding = 13
