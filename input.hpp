@@ -28,6 +28,7 @@ void input_thread(
 
     // For trailing rectangles
     int screen_height, // This is for optimization reasons. (Delete the trail after its off-screen)
+    int trail_width,
     int trail_speed,
     std::vector<Rectangle> recVector
 );

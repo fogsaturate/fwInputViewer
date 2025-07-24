@@ -74,6 +74,7 @@ void input_thread(
 
     // For trailing rectangles
     int screen_height, // This is for optimization reasons. (Delete the trail after its off-screen)
+    int trail_width,
     int trail_speed, // How fast the rectangles go.
     std::vector<Rectangle> recVector // For fretVector
 ) {
@@ -139,7 +140,7 @@ void input_thread(
                         state_of_button.held_bool = true;
 
                         // Trail Logic
-                        Rectangle trail_rec = CreateTrail(recVector[i], trail_speed);
+                        Rectangle trail_rec = CreateTrail(recVector[i], trail_speed, trail_width);
                         state_of_button.trail_vector.push_back(trail_rec);
                     } 
 
