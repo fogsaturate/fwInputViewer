@@ -1,2 +1,3 @@
-main
-.vscode/
+.vscode/**
+!.vscode/extensions.json
+.cache/
