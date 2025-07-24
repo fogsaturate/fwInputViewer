@@ -2,18 +2,18 @@
 width = 610
 height = 800
 custom_texture = false
-trail_speed = 400
+trail_speed = 700
 trail_width = 50
 trail_offset = -1 # 1 = starts at top, 0 = starts in the middle, -1 = starts at the bottom
 
 [colors]
-green_fret = "#00ff00"
-red_fret = "#ff0000"
-yellow_fret = "#ffff00"
-blue_fret = "#0050ff"
-orange_fret = "#ff8200"
-strum_up_color = "#9d00ff"
-strum_down_color = "#9d00ff"
+green_fret = "#00e430"
+red_fret = "#e62937"
+yellow_fret = "#fdf900"
+blue_fret = "#0079f1"
+orange_fret = "#ffa100"
+strum_up_color = "#873cbe"
+strum_down_color = "#873cbe"
 
 # For bindings, please check https://hardwaretester.com/gamepad to put in your bindings!
 [bindings]

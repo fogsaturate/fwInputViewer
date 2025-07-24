@@ -4,6 +4,8 @@
 #include <atomic>
 #include <raylib.h>
 #include <vector>
+#include "createitem.hpp"
+#include <iostream>
 
 
 std::atomic<bool> running(true);
@@ -24,6 +26,7 @@ struct button_state {
     bool held_bool;
     int press_counter;
     float hold_timer;
+    std::vector<Rectangle> trail_vector;
 };
 
 std::vector<button_state> button_states;
@@ -71,7 +74,8 @@ void input_thread(
 
     // For trailing rectangles
     int screen_height, // This is for optimization reasons. (Delete the trail after its off-screen)
-    int trail_speed // How fast the rectangles go.
+    int trail_speed, // How fast the rectangles go.
+    std::vector<Rectangle> recVector // For fretVector
 ) {
 
     // Initializing the bindings first
@@ -89,6 +93,7 @@ void input_thread(
 
         sf::Joystick::update();
         float deltaTime = clock.restart().asSeconds(); // I will be using this for the trailing rectangles
+        float moveDistance = deltaTime * trail_speed;
 
         float povY = 0.f;
         if (dpad_axis) {
@@ -99,7 +104,9 @@ void input_thread(
         bool strumDownHeld = (povY < -90);
 
         if (sf::Joystick::isConnected(controller_id)) {
-            for (auto& state_of_button: button_states) {
+            // for (auto& state_of_button: button_states) {
+            for (size_t i = 0; i < button_states.size(); i++) {
+                auto& state_of_button = button_states[i];
 
                 int joystick_button = getJoystickBind(
                     state_of_button.button_bind, 
@@ -114,6 +121,7 @@ void input_thread(
 
                 bool held = false;
 
+                // D-pad Axis checking (for Guitars that also use buttons for strumming, such as Raphnets)
                 if (state_of_button.button_bind == ControllerBinding::StrumUp) {
                     held = strumUpHeld;
                 } else if (state_of_button.button_bind == ControllerBinding::StrumDown) {
@@ -122,19 +130,43 @@ void input_thread(
                     held = sf::Joystick::isButtonPressed(controller_id, joystick_button);
                 }
 
-                if (held && !state_of_button.held_bool) {
-                    state_of_button.press_counter++;
-                }
 
                 if (held) {
-                    if (!state_of_button.held_bool) {
-                        // this sucks
+                    if (!state_of_button.held_bool) { 
+                        // Detects first frame the button is held for
+                        state_of_button.press_counter++;
                         state_of_button.hold_timer = 0.0f;
                         state_of_button.held_bool = true;
+
+                        // Trail Logic
+                        Rectangle trail_rec = CreateTrail(recVector[i], trail_speed);
+                        state_of_button.trail_vector.push_back(trail_rec);
+                    } 
+
+                    // Detects every frame the button is held for
+                    if (!state_of_button.trail_vector.empty()) {
+                        state_of_button.trail_vector.back().height = state_of_button.hold_timer * trail_speed;
                     }
+
                     state_of_button.hold_timer += deltaTime;
-                } else {
+
+                } else { 
+                    // Detects every frame the button is released for
                     state_of_button.held_bool = false;
+                }
+
+                // If it is the first trail (it is being held currently and growing in height), then ignore it.
+                size_t trailCount = state_of_button.trail_vector.size();
+                for (size_t j = 0; j + 1 < trailCount; ++j) {
+                    state_of_button.trail_vector[j].y += moveDistance;
+                }
+
+                if (!held && trailCount > 0) {
+                    state_of_button.trail_vector.back().y += moveDistance;
+                }
+
+                while (!state_of_button.trail_vector.empty() && state_of_button.trail_vector.front().y >= screen_height) {
+                    state_of_button.trail_vector.erase(state_of_button.trail_vector.begin());
                 }
             }
         }

@@ -59,6 +59,8 @@ int main() {
     Color strumUpColor = hexStringToInt(config["colors"]["strum_up_color"].value_or("#9d00ff"));
     Color strumDownColor = hexStringToInt(config["colors"]["strum_down_color"].value_or("#9d00ff"));
 
+    std::vector<Rectangle> fretVector = CreateFrets();
+
     std::thread inputThread(
         input_thread,
         controllerID,
@@ -71,7 +73,8 @@ int main() {
         strumUpBind,
         strumDownBind,
         height,
-        trailSpeed
+        trailSpeed,
+        fretVector
     );
 
     std::vector<Color> fretColors = {
@@ -87,7 +90,7 @@ int main() {
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
     InitWindow(width, height, "fwInput Viewer");
 
-    SetTargetFPS(60);
+    SetTargetFPS(30);
 
     int pressCounterFontSize = 26;
     int holdTimerFontSize = 14;
@@ -99,7 +102,7 @@ int main() {
         ClearBackground(BLANK);
         // ClearBackground(BLACK);
 
-        std::vector<Rectangle> fretVector = CreateFrets();
+        // std::vector<Rectangle> fretVector = CreateFrets();
 
         for (size_t i = 0; i < fretVector.size(); i++) {
             if (button_states[i].held_bool) {
@@ -112,7 +115,7 @@ int main() {
             int currentPressCounter = button_states[i].press_counter;
             std::string pressCountString = std::to_string(currentPressCounter);
 
-            int fretPadding = 10;
+            int fretPadding = 15;
             int maxCounterWidth = fretVector[i].x - fretPadding * 2;
             int pressCountWidth = MeasureText(pressCountString.c_str(), pressCounterFontSize);
 
@@ -146,34 +149,10 @@ int main() {
             DrawText(pressCountString.c_str(), pressCountX, pressCountY, pressCounterFontSize, WHITE);
             DrawText(holdTimerString.c_str(), holdTimerX, holdTimerY, holdTimerFontSize, WHITE);
 
+            for (auto& rect: button_states[i].trail_vector) {
+                DrawRectangleRec(rect, Transparentify(fretColors[i], 190));
+            }
         }
-
-        // for (int i = 0; i < 7; i++) {
-        //     DrawRectangleLinesEx(testRec, 5.0, WHITE);
-        //     testRec.x += 75;
-        // }
-
-        // Rectangle fillRec = {55,55,70,70};
-
-        // Rectangle barTest = {30,90,60,60};
-
-        // std::vector<Rectangle> barList;
-
-        // DrawRectangleRec(barTest,WHITE);
-
-        // for (int i = 0; i < BUTTON_COUNT; ++i) {
-        //     int y = 30 + i * 30;
-
-        //     std::string label = "Button " + std::to_string(BUTTON_IDS[i]) + ": ";
-        //     label += buttonStates[i].load();
-
-        //     DrawText(label.c_str(), 50, y, 20, WHITE);
-        // }
-
-        // std::string axisText = "Axis: 1 " + std::to_string(joystickAxis.load());
-
-        // DrawText(axisText.c_str(), 50, 270, 20, WHITE);
-
         EndDrawing();
     }
 

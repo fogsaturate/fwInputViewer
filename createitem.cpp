@@ -26,3 +26,19 @@ Color Transparentify(Color color, int alpha_value) { // for making colors slight
     transparentColor.a = alpha_value;
     return transparentColor;
 }
+
+Rectangle CreateTrail(Rectangle fretSquare, int trailSpeed) {
+
+    Rectangle trailRec;
+
+    // trailRec.width = fretSquare.width;
+    trailRec.width = fretSquare.width - (5 * 2);
+    trailRec.height = 0;
+
+    // I will use this equation when I implement custom trail width.
+    trailRec.x = (fretSquare.x + fretSquare.width / 2) - trailRec.width / 2;
+    // trailRec.x = fretSquare.x;
+    trailRec.y = fretSquare.y + fretSquare.height; // bottom of fretSquare
+
+    return trailRec;
+}
