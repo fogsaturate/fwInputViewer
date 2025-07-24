@@ -6,7 +6,10 @@ GCC Arguments for VS Code
 "args": [
     "-fdiagnostics-color=always",
     "-g",
-    "${file}",
+    "${fileDirname}/main.cpp",
+    "${fileDirname}/input.cpp",
+    "${fileDirname}/config.cpp",
+    "${fileDirname}/createitem.cpp",
     "-o",
     "${fileDirname}/${fileBasenameNoExtension}",
     "-lraylib", "-lsfml-window", "-lsfml-system",
