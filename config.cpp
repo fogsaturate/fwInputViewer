@@ -7,7 +7,7 @@
 
 void createDefaultConfig() {
     std::string default_config = R"([general]
-width = 575
+width = 610
 height = 800
 custom_texture = false
 trail_speed = 400
@@ -20,6 +20,8 @@ red_fret = "#ff0000"
 yellow_fret = "#ffff00"
 blue_fret = "#0050ff"
 orange_fret = "#ff8200"
+strum_up_color = "#9d00ff"
+strum_down_color = "#9d00ff"
 
 # For bindings, please check https://hardwaretester.com/gamepad to put in your bindings!
 [bindings]
