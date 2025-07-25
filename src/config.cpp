@@ -9,8 +9,8 @@ void createDefaultConfig() {
     std::string default_config = R"([general]
 width = 610 # I wouldn't recommend changing this yet!! (I did not implement scaling but I will soon!)
 height = 500
-fps = 60
-polling_rate = 1000 # I don't suggest going over 1000, as it possibly slows the trails down.
+fps = 60 # Change this to whatever you want, the inputs are frame independent! :)
+polling_rate = 2000 # A good middle ground would be 2000 to capture as much inputs as possible
 custom_font = "FiraCode-Bold.ttf" # If blank or invalid, will fall back to a default font.
 press_counter_font_spacing = 2 # How spaced out the numbers are
 press_counter_font_size = 26 # How big the numbers are
@@ -49,8 +49,38 @@ red_binding = 11
 yellow_binding = 10
 blue_binding = 9
 orange_binding = 8
-strum_up_binding = 7
-strum_down_binding = 6)";
+strum_up_binding = 8 # Strum bindings aren't used if dpad_axis is true
+strum_down_binding = 5
+
+# Useful information that you could use
+
+# HID Game Controller (Santroller) Guitar
+
+# green_binding = 12
+# red_binding = 11
+# yellow_binding = 10
+# blue_binding = 9
+# orange_binding = 8
+
+# XInput (Santroller) Guitar
+
+# green_binding = 0
+# red_binding = 1
+# yellow_binding = 3
+# blue_binding = 2
+# orange_binding = 4
+
+# Raphnet Guitar
+
+# dpad_axis = false
+# green_binding = 0
+# red_binding = 1
+# yellow_binding = 2
+# blue_binding = 3
+# orange_binding = 4
+# strum_up_binding = 8
+# strum_down_binding = 5
+)";
 
     std::cout << "Default Settings not found! Writing Now...\n";
 
