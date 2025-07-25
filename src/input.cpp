@@ -6,6 +6,8 @@
 #include <vector>
 #include "createitem.hpp"
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 
 std::atomic<bool> running(true);
@@ -89,21 +91,29 @@ void input_thread(
     button_states.push_back({ControllerBinding::StrumUp, false, 0, 0.f});
     button_states.push_back({ControllerBinding::StrumDown, false, 0, 0.f});
 
-    sf::Clock clock;
+    // sf::Clock clock;
+    auto lastTime = std::chrono::steady_clock::now();
 
     while (running.load()) {
+        auto currentTime = std::chrono::steady_clock::now();
+        std::chrono::duration<float> elapsed = currentTime - lastTime;
+
+        float deltaTime = elapsed.count();
+        float moveDistance = deltaTime * trail_speed;
+
+        lastTime = currentTime;
 
         sf::Joystick::update();
-        float deltaTime = clock.restart().asSeconds(); // I will be using this for the trailing rectangles
-        float moveDistance = deltaTime * trail_speed;
+
+        bool strumUpHeld;
+        bool strumDownHeld;
 
         float povY = 0.f;
         if (dpad_axis) {
             povY = sf::Joystick::getAxisPosition(controller_id, sf::Joystick::Axis::PovY);
+            strumUpHeld = (povY > 90);
+            strumDownHeld = (povY < -90);
         }
-
-        bool strumUpHeld = (povY > 90);
-        bool strumDownHeld = (povY < -90);
 
         if (sf::Joystick::isConnected(controller_id)) {
             // for (auto& state_of_button: button_states) {
@@ -124,9 +134,9 @@ void input_thread(
                 bool held = false;
 
                 // D-pad Axis checking (for Guitars that also use buttons for strumming, such as Raphnets)
-                if (state_of_button.button_bind == ControllerBinding::StrumUp) {
+                if (state_of_button.button_bind == ControllerBinding::StrumUp && dpad_axis) {
                     held = strumUpHeld;
-                } else if (state_of_button.button_bind == ControllerBinding::StrumDown) {
+                } else if (state_of_button.button_bind == ControllerBinding::StrumDown && dpad_axis) {
                     held = strumDownHeld;
                 } else {
                     held = sf::Joystick::isButtonPressed(controller_id, joystick_button);
@@ -147,7 +157,8 @@ void input_thread(
 
                     // Detects every frame the button is held for
                     if (!state_of_button.trail_vector.empty()) {
-                        state_of_button.trail_vector.back().height = state_of_button.hold_timer * trail_speed;
+                        // I am going to clamp this at .2 pixels since some tick perfect inputs aren't even rendered lol
+                        state_of_button.trail_vector.back().height = std::max(state_of_button.hold_timer * trail_speed, 0.2f);
                     }
 
                     state_of_button.hold_timer += deltaTime;
@@ -173,7 +184,6 @@ void input_thread(
             }
         }
         // This will probably run at 100% CPU usage if I don't limit the polling rate !!!!! :)
-        // Limiting to 0.5ms
-        sf::sleep(sf::microseconds(1000000 / polling_rate));
+        std::this_thread::sleep_for(std::chrono::microseconds(1000000 / polling_rate));
     }
 }
