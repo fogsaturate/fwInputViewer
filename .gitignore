@@ -1,3 +1,4 @@
 .vscode/**
 !.vscode/extensions.json
 .cache/
+build/

@@ -5,11 +5,14 @@ fog's wacky input viewer, for Clone Hero, YARG, and more
 ## Build Instructions
 
 ```
-meson builddir
+mkdir build
 ```
 ```
-cd builddir
+cd build
 ```
 ```
-ninja
+cmake ..
+```
+```
+cmake --build .
 ```
