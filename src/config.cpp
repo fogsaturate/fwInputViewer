@@ -1,4 +1,4 @@
-#include <toml++/toml.hpp>
+#include <toml.hpp>
 #include "config.hpp"
 #include <iostream>
 #include <filesystem>
@@ -8,7 +8,9 @@
 void createDefaultConfig() {
     std::string default_config = R"([general]
 width = 610 # I wouldn't recommend changing this yet!!
-height = 800
+height = 500
+fps = 60
+polling_rate = 1000 # I don't suggest going over 1000, as it possibly slows the trails down.
 custom_font = "FiraCode-Bold.ttf" # If blank or invalid, will fall back to a default font.
 press_counter_font_spacing = 2
 press_counter_font_size = 26
@@ -36,13 +38,13 @@ trail_transparency = 190
 [bindings]
 controller_id = 0
 dpad_axis = true # This setting should only be false if you are on a raphnet, or another HID joystick adapter
-green_binding = 0
-red_binding = 1
-yellow_binding = 4
-blue_binding = 3
-orange_binding = 6
-strum_up_binding = 12
-strum_down_binding = 13)";
+green_binding = 12
+red_binding = 11
+yellow_binding = 10
+blue_binding = 9
+orange_binding = 8
+strum_up_binding = 7
+strum_down_binding = 6)";
 
     std::cout << "Default Settings not found! Writing Now...\n";
 

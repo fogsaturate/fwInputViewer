@@ -7,7 +7,7 @@
 #include "input.hpp"
 #include "config.hpp"
 #include "createitem.hpp"
-#include <toml++/toml.hpp>
+#include <toml.hpp>
 
 Color hexStringToInt(std::string hexString) {
     hexString = hexString.substr(1); // get rid of the # at the start (reading from toml config)
@@ -39,6 +39,8 @@ int main() {
 
     int width = config["general"]["width"].value_or(610);
     int height = config["general"]["height"].value_or(800);
+    int fps = config["general"]["fps"].value_or(60);
+    int pollingRate = config["general"]["polling_rate"].value_or(2000);
 
     std::string customFont = config["general"]["custom_font"].value_or("");
     int pressCounterFontSpacing = config["general"]["press_counter_font_spacing"].value_or(2);
@@ -94,6 +96,7 @@ int main() {
         height,
         trailWidth,
         trailSpeed,
+        pollingRate,
         fretVector
     );
 
@@ -119,7 +122,7 @@ int main() {
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
     InitWindow(width, height, "fwInput Viewer");
 
-    SetTargetFPS(120);
+    SetTargetFPS(fps);
 
     Font pressCounterTTF = loadFontFallback(customFont, pressCounterFontSize);
     Font holdTimerTTF = loadFontFallback(customFont, holdTimerFontSize);

@@ -1,5 +1,5 @@
 #pragma once
 
-#include <toml++/toml.hpp>
+#include <toml.hpp>
 
 toml::table loadConfig(bool retry = true);
