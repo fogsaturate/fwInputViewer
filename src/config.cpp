@@ -7,14 +7,14 @@
 
 void createDefaultConfig() {
     std::string default_config = R"([general]
-width = 610 # I wouldn't recommend changing this yet!!
+width = 610 # I wouldn't recommend changing this yet!! (I did not implement scaling but I will soon!)
 height = 500
 fps = 60
 polling_rate = 1000 # I don't suggest going over 1000, as it possibly slows the trails down.
 custom_font = "FiraCode-Bold.ttf" # If blank or invalid, will fall back to a default font.
-press_counter_font_spacing = 2
-press_counter_font_size = 26
-press_counter_font_padding = 15
+press_counter_font_spacing = 2 # How spaced out the numbers are
+press_counter_font_size = 26 # How big the numbers are
+press_counter_font_padding = 15 # This is for shrinking the font size after it reaches a certain threshold
 hold_timer_font_spacing = 0
 hold_timer_font_size = 14
 hold_timer_font_padding = 5
@@ -31,12 +31,18 @@ blue_fret = "#0079f1"
 orange_fret = "#ffa100"
 strum_up_color = "#873cbe"
 strum_down_color = "#873cbe"
-hold_transparency = 190
-trail_transparency = 190
+hold_transparency = 190 # 0 - 255
+trail_transparency = 190 # 0 - 255
 
 # For bindings, please check https://hardwaretester.com/gamepad to put in your bindings!
+# If that doesn't work, then press WIN + R, then type in joy.cpl
+# Click on your guitar, go to properties, and look at the buttons manually
+# There might be a small chance it is 1 number off, so its practically trial and error
+
+# Another quick note that keyboard is not supported yet !!!
+
 [bindings]
-controller_id = 0
+controller_id = 0 # Change this if you have duplicate guitars OR more than one controller, and 0 doesn't work.
 dpad_axis = true # This setting should only be false if you are on a raphnet, or another HID joystick adapter
 green_binding = 12
 red_binding = 11
