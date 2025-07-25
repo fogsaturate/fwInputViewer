@@ -64,7 +64,7 @@ int main() {
     int orangeBind = config["bindings"]["orange_binding"].value_or(6);
 
     int strumUpBind = config["bindings"]["strum_up_binding"].value_or(12);
-    int strumDownBind = config["bindings"]["strum_Down_binding"].value_or(13);
+    int strumDownBind = config["bindings"]["strum_down_binding"].value_or(13);
 
     // Colors
 
