@@ -33,7 +33,7 @@ Rectangle CreateTrail(Rectangle fretSquare, int trailSpeed, int trailWidth) {
 
     // trailRec.width = fretSquare.width;
     trailRec.width = trailWidth;
-    trailRec.height = 0;
+    trailRec.height = 0; // This will always have an absolute value
 
     // I will use this equation when I implement custom trail width.
     trailRec.x = (fretSquare.x + fretSquare.width / 2) - trailRec.width / 2;
