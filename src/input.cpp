@@ -158,7 +158,7 @@ void input_thread(
                     // Detects every frame the button is held for
                     if (!state_of_button.trail_vector.empty()) {
                         // I am going to clamp this at .2 pixels since some tick perfect inputs aren't even rendered lol
-                        state_of_button.trail_vector.back().height = std::max(state_of_button.hold_timer * trail_speed, 0.2f);
+                        state_of_button.trail_vector.back().height = std::max(state_of_button.hold_timer * trail_speed, 0.5f);
                     }
 
                     state_of_button.hold_timer += deltaTime;
