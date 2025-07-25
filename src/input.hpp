@@ -30,5 +30,6 @@ void input_thread(
     int screen_height, // This is for optimization reasons. (Delete the trail after its off-screen)
     int trail_width,
     int trail_speed,
+    int polling_rate,
     std::vector<Rectangle> recVector
 );

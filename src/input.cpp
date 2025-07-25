@@ -76,6 +76,7 @@ void input_thread(
     int screen_height, // This is for optimization reasons. (Delete the trail after its off-screen)
     int trail_width,
     int trail_speed, // How fast the rectangles go.
+    int polling_rate,
     std::vector<Rectangle> recVector // For fretVector
 ) {
 
@@ -173,6 +174,6 @@ void input_thread(
         }
         // This will probably run at 100% CPU usage if I don't limit the polling rate !!!!! :)
         // Limiting to 0.5ms
-        sf::sleep(sf::microseconds(500));
+        sf::sleep(sf::microseconds(1000000 / polling_rate));
     }
 }
