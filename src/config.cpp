@@ -24,6 +24,7 @@ hold_timer_font_spacing = 0
 hold_timer_font_size = 14
 hold_timer_font_padding = 5
 hold_timer_y_offset = 0
+hold_timer_decimals = 6 # minimum value is 3
 trail_speed = 700
 trail_width = 60
 trail_offset = -1 # 1 = starts at top, 0 = starts in the middle, -1 = starts at the bottom

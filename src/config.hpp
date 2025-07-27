@@ -30,6 +30,7 @@ struct general_config final {
     int hold_timer_font_size = 14;
     int hold_timer_font_padding = 5;
     int hold_timer_y_offset = 0;
+    int hold_timer_decimals = 6;
 
     int trail_speed = 700;
     int trail_width = 60;
