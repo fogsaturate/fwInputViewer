@@ -46,9 +46,11 @@ int main() {
     int pressCounterFontSpacing = config["general"]["press_counter_font_spacing"].value_or(2);
     int pressCounterFontSize = config["general"]["press_counter_font_size"].value_or(26);
     int pressCounterFontPadding = config["general"]["press_counter_font_padding"].value_or(15);
+    int pressCountYOffset = config["general"]["press_counter_y_offset"].value_or(0);
     int holdTimerFontSpacing = config["general"]["hold_timer_font_spacing"].value_or(0);
     int holdTimerFontSize = config["general"]["hold_timer_font_size"].value_or(14);
     int holdTimerFontPadding = config["general"]["hold_timer_font_padding"].value_or(5);
+    int holdTimerYOffset = config["general"]["hold_timer_y_offset"].value_or(5);
 
     int trailSpeed = config["general"]["trail_speed"].value_or(700);
     int trailWidth = config["general"]["trail_width"].value_or(60);
@@ -77,10 +79,20 @@ int main() {
     Color strumUpColor = hexStringToInt(config["colors"]["strum_up_color"].value_or("#9d00ff"));
     Color strumDownColor = hexStringToInt(config["colors"]["strum_down_color"].value_or("#9d00ff"));
 
+    int underlayTransparency = config["colors"]["underlay_transparency"].value_or(0);
+    int backgroundTransparency = config["colors"]["background_transparency"].value_or(0);
+    int outlineTransparency = config["colors"]["outline_transparency"].value_or(255);
     int holdTransparency = config["colors"]["hold_transparency"].value_or(190);
     int trailTransparency = config["colors"]["trail_transparency"].value_or(190);
 
-    std::vector<Rectangle> fretVector = CreateFrets();
+    int rectWidth = config["general"]["rect_width"].value_or(70);
+    int rectHeight = config["general"]["rect_height"].value_or(70);
+    int rectPadding = config["general"]["rect_padding"].value_or(10);
+    bool rectTopLineOnly = config["general"]["rect_top_line_only"].value_or(false);
+
+    std::vector<Rectangle> fretVector = CreateFrets(rectWidth, rectHeight, rectPadding);
+    std::vector<Vector2> topLineVector = CreateLines(rectWidth, rectPadding, false);
+    std::vector<Vector2> topLineEndVector = CreateLines(rectWidth, rectPadding, true);
 
     std::thread inputThread(
         input_thread,
@@ -110,6 +122,9 @@ int main() {
         strumDownColor
     };
 
+    Color underlay = Transparentify(BLACK, underlayTransparency);
+    BlendMode blendMode = underlayTransparency > 0 ? BLEND_ADDITIVE : BLEND_ALPHA; // needed for underlay to work properly
+
     // bool fontLoaded = false;
 
     // if (customTTFfont.texture.id == 0) {
@@ -137,10 +152,23 @@ int main() {
         // std::vector<Rectangle> fretVector = CreateFrets();
 
         for (size_t i = 0; i < fretVector.size(); i++) {
+            DrawRectangleRec(fretVector[i], underlay);
+            BeginBlendMode(blendMode);
+            DrawRectangleRec(fretVector[i], Transparentify(fretColors[i], backgroundTransparency));
             if (button_states[i].held_bool) {
                 DrawRectangleRec(fretVector[i], Transparentify(fretColors[i], holdTransparency));
             }
-            DrawRectangleLinesEx(fretVector[i], 5.0, fretColors[i]);
+            EndBlendMode();
+            if (rectTopLineOnly) {
+                DrawLineEx(topLineVector[i], topLineEndVector[i], 5.0, underlay);
+                BeginBlendMode(blendMode);
+                DrawLineEx(topLineVector[i], topLineEndVector[i], 5.0, Transparentify(fretColors[i], outlineTransparency));
+            } else {
+                DrawRectangleLinesEx(fretVector[i], 5.0, underlay);
+                BeginBlendMode(blendMode);
+                DrawRectangleLinesEx(fretVector[i], 5.0, Transparentify(fretColors[i], outlineTransparency));
+            }
+            EndBlendMode();
 
             // Press Counter Text Logic
 
@@ -157,7 +185,7 @@ int main() {
             }
 
             float pressCountX = fretVector[i].x + (fretVector[i].width / 2) - (static_cast<float>(pressCountWidth) / 2);
-            float pressCountY = fretVector[i].y + (fretVector[i].height / 2) - (static_cast<float>(pressCounterFontSize) / 2);
+            float pressCountY = (fretVector[i].y + (fretVector[i].height / 2) - (static_cast<float>(pressCounterFontSize) / 2)) + pressCountYOffset;
 
             // Held Timer Text Logic
 
@@ -174,7 +202,7 @@ int main() {
             }
 
             float holdTimerX = fretVector[i].x + (fretVector[i].width / 2) - (static_cast<float>(holdTimerWidth) / 2);
-            float holdTimerY = fretVector[i].y - 20;
+            float holdTimerY = (fretVector[i].y - 20) + holdTimerYOffset;
 
             // Text Render Call
 

@@ -1,7 +1,7 @@
 #include <raylib.h>
 #include <vector>
 
-std::vector<Rectangle> CreateFrets() {
+std::vector<Rectangle> CreateFrets(int width, int height, int padding) {
 
     std::vector<Rectangle> keyVector;
 
@@ -9,13 +9,30 @@ std::vector<Rectangle> CreateFrets() {
     for (int i = 0; i < 7; i++) {
         Rectangle keyRect;
 
-        keyRect.width = 70;
-        keyRect.height = 70;
+        keyRect.width = width;
+        keyRect.height = height;
 
-        keyRect.x = 30 + i * 80;
+        keyRect.x = 30 + i * (width + padding);
         keyRect.y = 30;
 
         keyVector.push_back(keyRect);
+    }
+
+    return keyVector;
+}
+
+std::vector<Vector2> CreateLines(int width, int padding, bool end) {
+
+    std::vector<Vector2> keyVector;
+
+
+    for (int i = 0; i < 7; i++) {
+        Vector2 keyVec2;
+
+        keyVec2.x = (30 + (end * width)) + i * (width + padding);
+        keyVec2.y = 30;
+
+        keyVector.push_back(keyVec2);
     }
 
     return keyVector;
