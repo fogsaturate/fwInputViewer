@@ -91,8 +91,12 @@ int main() {
     bool rectTopLineOnly = config["general"]["rect_top_line_only"].value_or(false);
 
     std::vector<Rectangle> fretVector = CreateFrets(rectWidth, rectHeight, rectPadding);
-    std::vector<Vector2> topLineVector = CreateLines(rectWidth, rectPadding, false);
-    std::vector<Vector2> topLineEndVector = CreateLines(rectWidth, rectPadding, true);
+    std::vector<Vector2> topLineVector;
+    std::vector<Vector2> topLineEndVector;
+    if (rectTopLineOnly) {
+        topLineVector = CreateLines(rectWidth, rectPadding, false);
+        topLineEndVector = CreateLines(rectWidth, rectPadding, true);
+    }
 
     std::thread inputThread(
         input_thread,
