@@ -8,6 +8,7 @@
 #include "config.hpp"
 #include "createitem.hpp"
 #include <toml.hpp>
+#include <sstream>
 
 Color hexStringToInt(std::string hexString) {
     hexString = hexString.substr(1); // get rid of the # at the start (reading from toml config)
@@ -51,6 +52,8 @@ int main() {
     int holdTimerFontSize = config["general"]["hold_timer_font_size"].value_or(14);
     int holdTimerFontPadding = config["general"]["hold_timer_font_padding"].value_or(5);
     int holdTimerYOffset = config["general"]["hold_timer_y_offset"].value_or(5);
+    int holdTimerDecimals = config["general"]["hold_timer_decimals"].value_or(6);
+    if (holdTimerDecimals < 3) holdTimerDecimals = 3; // minimum value so users can't effectively disable this feature
 
     int trailSpeed = config["general"]["trail_speed"].value_or(700);
     int trailWidth = config["general"]["trail_width"].value_or(60);
@@ -194,7 +197,10 @@ int main() {
             // Held Timer Text Logic
 
             float holdTimer = button_states[i].hold_timer;
-            std::string holdTimerString = std::to_string(holdTimer);
+            //std::string holdTimerString = std::to_string(holdTimer);
+            std::stringstream holdTimerStream;
+            holdTimerStream << std::fixed << std::setprecision(holdTimerDecimals) << holdTimer;
+            std::string holdTimerString = holdTimerStream.str();
 
             int padding = holdTimerFontPadding;
             int maxTimerWidth = fretVector[i].x - padding * 2;
