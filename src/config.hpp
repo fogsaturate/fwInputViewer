@@ -2,12 +2,13 @@
 
 #include <toml.hpp>
 #include <algorithm>
+#include <raylib.h>
 
 // These are used for transparency
 constexpr int MIN_ALPHA = 0;
 constexpr int MAX_ALPHA = 255;
 
-struct general_config final {
+struct general_config {
     int width = 610;
     int height = 800;
     int fps = 60;
@@ -38,13 +39,13 @@ struct general_config final {
 };
 
 struct colors_config final {
-    std::string green_fret_color = "#00e430";
-    std::string red_fret = "#e62937";
-    std::string yellow_fret = "#fdf900";
-    std::string blue_fret = "#0079f1";
-    std::string orange_fret = "#ffa100";
-    std::string strum_up_color = "#873cbe";
-    std::string strum_down_color = "#873cbe";
+    Color green_fret_color = GREEN;
+    Color red_fret_color = RED;
+    Color yellow_fret_color = YELLOW;
+    Color blue_fret_color = BLUE;
+    Color orange_fret_color = ORANGE;
+    Color strum_up_color = MAGENTA;
+    Color strum_down_color = MAGENTA;
 
     // I might add released transparency somewhere down the line,
     // or switch to RGB values.
@@ -75,4 +76,12 @@ struct bindings_config final {
     input_binding strum_down_binding = {5, "down_arrow", "null"};
 };
 
-toml::table loadConfig(bool retry = true);
+struct configStruct final {
+    general_config generalConfig{};
+    colors_config colorConfig{};
+    bindings_config bindingConfig{};
+};
+
+extern configStruct FWIVConfig;
+
+void loadConfig();

@@ -4,6 +4,22 @@
 #include <filesystem>
 #include <fstream> // Required for file stream operations
 #include <string>  // Required for std::string
+#include <raylib.h>
+
+configStruct FWIVConfig{};
+
+Color hexStringToInt(std::string hexString) {
+    hexString = hexString.substr(1); // get rid of the # at the start (reading from toml config)
+
+    Color color;
+    // Basically what I am doing here is splitting the string into 3 pieces, then converting to hex
+    color.r = std::stoi(hexString.substr(0, 2), nullptr, 16);
+    color.g = std::stoi(hexString.substr(2, 2), nullptr, 16);
+    color.b = std::stoi(hexString.substr(4, 2), nullptr, 16);
+    color.a = 255;
+
+    return color;
+}
 
 void createDefaultConfig() {
     std::string default_config = R"([general]
@@ -106,29 +122,65 @@ strum_down_binding = 5
     }
 }
 
-void checkIfConfigExists(bool corrupt_toml) {
-    if (!std::filesystem::exists("config.toml") || corrupt_toml) {
+void checkIfConfigExists() {
+    if (!std::filesystem::exists("config.toml")) {
         createDefaultConfig();
     }
 }
 
-toml::table loadConfig(bool retry) {
-    checkIfConfigExists(false);
+void loadConfig() {
+    checkIfConfigExists();
 
     try {
         toml::table tbl = toml::parse_file("config.toml");
-        return tbl;
+
+        // General Config
+
+        parseConfig(tbl);
+
     } 
     catch (const toml::parse_error& err) {
-        std::cerr << err << "\n";
-        std::cout << "config.toml Corrupt! Overwriting..." << "\n";
-        checkIfConfigExists(true);
+        std::cout << "config.toml Corrupt!" << std::endl;
+        std::cerr << err << std::endl;
 
-        if (retry) {
-            return loadConfig(false);
-        } else {
-            std::cerr << "Failed to load config after retry. Exiting...\n";
-            std::exit(EXIT_FAILURE);  // Force quit with failure code
-        }
+        std::cout << "\nIf the program fails to load, delete the config.toml" << std::endl;
     }
+}
+
+void parseConfig(toml::table config) {
+
+    // General
+
+    FWIVConfig.generalConfig.width = config["general"]["width"].value_or(610);
+    FWIVConfig.generalConfig.height = config["general"]["width"].value_or(500);
+    FWIVConfig.generalConfig.fps = config["general"]["fps"].value_or(60);
+    FWIVConfig.generalConfig.polling_rate = config["general"]["polling_rate"].value_or(2000);
+
+    FWIVConfig.generalConfig.custom_font = config["general"]["custom_font"].value_or("");
+    FWIVConfig.generalConfig.press_counter_font_spacing = config["general"]["custom_font"].value_or(2);
+    FWIVConfig.generalConfig.press_counter_font_size = config["general"]["custom_font"].value_or(2);
+    FWIVConfig.generalConfig.press_counter_font_padding = config["general"]["press_counter_font_padding"].value_or(15);
+    FWIVConfig.generalConfig.press_counter_y_offset = config["general"]["press_counter_y_offset"].value_or(0);
+
+    FWIVConfig.generalConfig.hold_timer_font_padding = config["general"]["hold_timer_font_spacing"].value_or(0);
+    FWIVConfig.generalConfig.hold_timer_font_size = config["general"]["hold_timer_font_size"].value_or(14);
+    FWIVConfig.generalConfig.hold_timer_font_padding = config["general"]["hold_timer_font_padding"].value_or(5);
+    FWIVConfig.generalConfig.hold_timer_y_offset = config["general"]["hold_timer_y_offset"].value_or(5);
+    FWIVConfig.generalConfig.hold_timer_decimals = config["general"]["hold_timer_decimals"].value_or(6);
+
+    FWIVConfig.generalConfig.trail_speed = config["general"]["trail_speed"].value_or(700);
+    FWIVConfig.generalConfig.trail_width = config["general"]["trail_width"].value_or(60);
+    FWIVConfig.generalConfig.trail_offset = config["general"]["trail_offset"].value_or(-1);
+
+    // Colors
+
+    FWIVConfig.colorConfig.green_fret_color = hexStringToInt(config["colors"]["green_fret"].value_or("#00ff00"));
+    FWIVConfig.colorConfig.red_fret_color = hexStringToInt(config["colors"]["red_fret"].value_or("#ff0000"));
+    FWIVConfig.colorConfig.yellow_fret_color = hexStringToInt(config["colors"]["yellow_fret"].value_or("#ffff00"));
+    FWIVConfig.colorConfig.blue_fret_color = hexStringToInt(config["colors"]["blue_fret"].value_or("#0050ff"));
+    FWIVConfig.colorConfig.orange_fret_color = hexStringToInt(config["colors"]["orange_fret"].value_or("#ff8200"));
+    FWIVConfig.colorConfig.strum_up_color = hexStringToInt(config["colors"]["strum_up_color"].value_or("#9d00ff"));
+    FWIVConfig.colorConfig.strum_down_color = hexStringToInt(config["colors"]["strum_down_color"].value_or("#9d00ff"));
+
+    FWIVConfig.colorConfig.underlay_transparency = config["colors"]["underlay_transparency"].value_or(0);
 }

@@ -141,6 +141,8 @@ int main() {
     //     fontLoaded = true;
     // }
 
+
+    SetTraceLogLevel(LOG_WARNING); // This will only log important errors instead of raylib's init prints
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
     InitWindow(width, height, "fwInput Viewer");
 
