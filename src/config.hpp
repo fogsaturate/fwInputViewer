@@ -8,7 +8,7 @@
 constexpr int MIN_ALPHA = 0;
 constexpr int MAX_ALPHA = 255;
 
-struct general_config {
+struct general_config final {
     int width = 610;
     int height = 800;
     int fps = 60;

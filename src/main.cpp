@@ -36,69 +36,83 @@ Font loadFontFallback(const std::string& path, int fontSize) {
 int main() {
 
     // Read from config first before init
-    toml::table config = loadConfig();
+    loadConfig();
 
-    int width = config["general"]["width"].value_or(610);
-    int height = config["general"]["height"].value_or(800);
-    int fps = config["general"]["fps"].value_or(60);
-    int pollingRate = config["general"]["polling_rate"].value_or(2000);
+    // int width = config["general"]["width"].value_or(610);
+    // int height = config["general"]["height"].value_or(800);
+    // int fps = config["general"]["fps"].value_or(60);
+    // int pollingRate = config["general"]["polling_rate"].value_or(2000);
 
-    std::string customFont = config["general"]["custom_font"].value_or("");
-    int pressCounterFontSpacing = config["general"]["press_counter_font_spacing"].value_or(2);
-    int pressCounterFontSize = config["general"]["press_counter_font_size"].value_or(26);
-    int pressCounterFontPadding = config["general"]["press_counter_font_padding"].value_or(15);
-    int pressCountYOffset = config["general"]["press_counter_y_offset"].value_or(0);
-    int holdTimerFontSpacing = config["general"]["hold_timer_font_spacing"].value_or(0);
-    int holdTimerFontSize = config["general"]["hold_timer_font_size"].value_or(14);
-    int holdTimerFontPadding = config["general"]["hold_timer_font_padding"].value_or(5);
-    int holdTimerYOffset = config["general"]["hold_timer_y_offset"].value_or(5);
-    int holdTimerDecimals = config["general"]["hold_timer_decimals"].value_or(6);
-    if (holdTimerDecimals < 3) holdTimerDecimals = 3; // minimum value so users can't effectively disable this feature
+    // std::string customFont = config["general"]["custom_font"].value_or("");
+    // int pressCounterFontSpacing = config["general"]["press_counter_font_spacing"].value_or(2);
+    // int pressCounterFontSize = config["general"]["press_counter_font_size"].value_or(26);
+    // int pressCounterFontPadding = config["general"]["press_counter_font_padding"].value_or(15);
+    // int pressCountYOffset = config["general"]["press_counter_y_offset"].value_or(0);
+    // int holdTimerFontSpacing = config["general"]["hold_timer_font_spacing"].value_or(0);
+    // int holdTimerFontSize = config["general"]["hold_timer_font_size"].value_or(14);
+    // int holdTimerFontPadding = config["general"]["hold_timer_font_padding"].value_or(5);
+    // int holdTimerYOffset = config["general"]["hold_timer_y_offset"].value_or(5);
+    // int holdTimerDecimals = config["general"]["hold_timer_decimals"].value_or(6);
+    // if (holdTimerDecimals < 3) holdTimerDecimals = 3; // minimum value so users can't effectively disable this feature
 
-    int trailSpeed = config["general"]["trail_speed"].value_or(700);
-    int trailWidth = config["general"]["trail_width"].value_or(60);
-    int trailOffset = config["general"]["trail_offset"].value_or(-1);
+    // int trailSpeed = config["general"]["trail_speed"].value_or(700);
+    // int trailWidth = config["general"]["trail_width"].value_or(60);
+    // int trailOffset = config["general"]["trail_offset"].value_or(-1);
 
-    int controllerID = config["bindings"]["controller_id"].value_or(0);
-    bool dpadAxis = config["bindings"]["dpad_axis"].value_or(true);
+    // int controllerID = config["bindings"]["controller_id"].value_or(0);
+    // bool dpadAxis = config["bindings"]["dpad_axis"].value_or(true);
 
-    int greenBind = config["bindings"]["green_binding"].value_or(0);
-    int redBind = config["bindings"]["red_binding"].value_or(1);
-    int yellowBind = config["bindings"]["yellow_binding"].value_or(4);
-    int blueBind = config["bindings"]["blue_binding"].value_or(3);
-    int orangeBind = config["bindings"]["orange_binding"].value_or(6);
+    // int greenBind = config["bindings"]["green_binding"].value_or(0);
+    // int redBind = config["bindings"]["red_binding"].value_or(1);
+    // int yellowBind = config["bindings"]["yellow_binding"].value_or(4);
+    // int blueBind = config["bindings"]["blue_binding"].value_or(3);
+    // int orangeBind = config["bindings"]["orange_binding"].value_or(6);
 
-    int strumUpBind = config["bindings"]["strum_up_binding"].value_or(12);
-    int strumDownBind = config["bindings"]["strum_down_binding"].value_or(13);
+    // int strumUpBind = config["bindings"]["strum_up_binding"].value_or(12);
+    // int strumDownBind = config["bindings"]["strum_down_binding"].value_or(13);
 
-    // Colors
+    // // Colors
 
-    Color greenColor = hexStringToInt(config["colors"]["green_fret"].value_or("#00ff00"));
-    Color redColor = hexStringToInt(config["colors"]["red_fret"].value_or("#ff0000"));
-    Color yellowColor = hexStringToInt(config["colors"]["yellow_fret"].value_or("#ffff00"));
-    Color blueColor = hexStringToInt(config["colors"]["blue_fret"].value_or("#0050ff"));
-    Color orangeColor = hexStringToInt(config["colors"]["orange_fret"].value_or("#ff8200"));
+    // Color greenColor = hexStringToInt(config["colors"]["green_fret"].value_or("#00ff00"));
+    // Color redColor = hexStringToInt(config["colors"]["red_fret"].value_or("#ff0000"));
+    // Color yellowColor = hexStringToInt(config["colors"]["yellow_fret"].value_or("#ffff00"));
+    // Color blueColor = hexStringToInt(config["colors"]["blue_fret"].value_or("#0050ff"));
+    // Color orangeColor = hexStringToInt(config["colors"]["orange_fret"].value_or("#ff8200"));
 
-    Color strumUpColor = hexStringToInt(config["colors"]["strum_up_color"].value_or("#9d00ff"));
-    Color strumDownColor = hexStringToInt(config["colors"]["strum_down_color"].value_or("#9d00ff"));
+    // Color strumUpColor = hexStringToInt(config["colors"]["strum_up_color"].value_or("#9d00ff"));
+    // Color strumDownColor = hexStringToInt(config["colors"]["strum_down_color"].value_or("#9d00ff"));
 
-    int underlayTransparency = config["colors"]["underlay_transparency"].value_or(0);
-    int backgroundTransparency = config["colors"]["background_transparency"].value_or(0);
-    int outlineTransparency = config["colors"]["outline_transparency"].value_or(255);
-    int holdTransparency = config["colors"]["hold_transparency"].value_or(190);
-    int trailTransparency = config["colors"]["trail_transparency"].value_or(190);
+    // int underlayTransparency = config["colors"]["underlay_transparency"].value_or(0);
+    // int backgroundTransparency = config["colors"]["background_transparency"].value_or(0);
+    // int outlineTransparency = config["colors"]["outline_transparency"].value_or(255);
+    // int holdTransparency = config["colors"]["hold_transparency"].value_or(190);
+    // int trailTransparency = config["colors"]["trail_transparency"].value_or(190);
 
-    int rectWidth = config["general"]["rect_width"].value_or(70);
-    int rectHeight = config["general"]["rect_height"].value_or(70);
-    int rectPadding = config["general"]["rect_padding"].value_or(10);
-    bool rectTopLineOnly = config["general"]["rect_top_line_only"].value_or(false);
+    // int rectWidth = config["general"]["rect_width"].value_or(70);
+    // int rectHeight = config["general"]["rect_height"].value_or(70);
+    // int rectPadding = config["general"]["rect_padding"].value_or(10);
+    // bool rectTopLineOnly = config["general"]["rect_top_line_only"].value_or(false);
 
-    std::vector<Rectangle> fretVector = CreateFrets(rectWidth, rectHeight, rectPadding);
+    std::vector<Rectangle> fretVector = CreateFrets(
+        FWIVConfig.generalConfig.rect_width,
+        FWIVConfig.generalConfig.rect_height, 
+        FWIVConfig.generalConfig.rect_padding
+    );
+
     std::vector<Vector2> topLineVector;
     std::vector<Vector2> topLineEndVector;
-    if (rectTopLineOnly) {
-        topLineVector = CreateLines(rectWidth, rectPadding, false);
-        topLineEndVector = CreateLines(rectWidth, rectPadding, true);
+    if (FWIVConfig.generalConfig.rect_top_line_only) {
+        topLineVector = CreateLines(
+            FWIVConfig.generalConfig.rect_width, 
+            FWIVConfig.generalConfig.rect_padding, 
+            false
+        );
+
+        topLineEndVector = CreateLines(
+            FWIVConfig.generalConfig.rect_width, 
+            FWIVConfig.generalConfig.rect_padding, 
+            true
+        );
     }
 
     std::thread inputThread(

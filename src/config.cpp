@@ -149,38 +149,94 @@ void loadConfig() {
 
 void parseConfig(toml::table config) {
 
+    auto& generalC = *config["general"].as_table();
+    auto& colorC = *config["colors"].as_table();
+    auto& bindingC = *config["bindings"].as_table();
+
     // General
 
-    FWIVConfig.generalConfig.width = config["general"]["width"].value_or(610);
-    FWIVConfig.generalConfig.height = config["general"]["width"].value_or(500);
-    FWIVConfig.generalConfig.fps = config["general"]["fps"].value_or(60);
-    FWIVConfig.generalConfig.polling_rate = config["general"]["polling_rate"].value_or(2000);
+    FWIVConfig.generalConfig.width = generalC["width"].value_or(610);
+    FWIVConfig.generalConfig.height = generalC["width"].value_or(500);
+    FWIVConfig.generalConfig.fps = generalC["fps"].value_or(60);
+    FWIVConfig.generalConfig.polling_rate = generalC["polling_rate"].value_or(2000);
 
-    FWIVConfig.generalConfig.custom_font = config["general"]["custom_font"].value_or("");
-    FWIVConfig.generalConfig.press_counter_font_spacing = config["general"]["custom_font"].value_or(2);
-    FWIVConfig.generalConfig.press_counter_font_size = config["general"]["custom_font"].value_or(2);
-    FWIVConfig.generalConfig.press_counter_font_padding = config["general"]["press_counter_font_padding"].value_or(15);
-    FWIVConfig.generalConfig.press_counter_y_offset = config["general"]["press_counter_y_offset"].value_or(0);
+    FWIVConfig.generalConfig.custom_font = generalC["custom_font"].value_or("");
 
-    FWIVConfig.generalConfig.hold_timer_font_padding = config["general"]["hold_timer_font_spacing"].value_or(0);
-    FWIVConfig.generalConfig.hold_timer_font_size = config["general"]["hold_timer_font_size"].value_or(14);
-    FWIVConfig.generalConfig.hold_timer_font_padding = config["general"]["hold_timer_font_padding"].value_or(5);
-    FWIVConfig.generalConfig.hold_timer_y_offset = config["general"]["hold_timer_y_offset"].value_or(5);
-    FWIVConfig.generalConfig.hold_timer_decimals = config["general"]["hold_timer_decimals"].value_or(6);
+    FWIVConfig.generalConfig.rect_width = generalC["rect_width"].value_or(70);
+    FWIVConfig.generalConfig.rect_height = generalC["rect_height"].value_or(70);
+    FWIVConfig.generalConfig.rect_padding = generalC["rect_padding"].value_or(10);
+    FWIVConfig.generalConfig.rect_top_line_only = generalC["rect_top_line_only"].value_or(false);
 
-    FWIVConfig.generalConfig.trail_speed = config["general"]["trail_speed"].value_or(700);
-    FWIVConfig.generalConfig.trail_width = config["general"]["trail_width"].value_or(60);
-    FWIVConfig.generalConfig.trail_offset = config["general"]["trail_offset"].value_or(-1);
+    FWIVConfig.generalConfig.press_counter_font_spacing = generalC["press_counter_font_spacing"].value_or(2);
+    FWIVConfig.generalConfig.press_counter_font_size = generalC["press_counter_font_size"].value_or(26);
+    FWIVConfig.generalConfig.press_counter_font_padding = generalC["press_counter_font_padding"].value_or(15);
+    FWIVConfig.generalConfig.press_counter_y_offset = generalC["press_counter_y_offset"].value_or(0);
+
+    FWIVConfig.generalConfig.hold_timer_font_padding = generalC["hold_timer_font_spacing"].value_or(0);
+    FWIVConfig.generalConfig.hold_timer_font_size = generalC["hold_timer_font_size"].value_or(14);
+    FWIVConfig.generalConfig.hold_timer_font_padding = generalC["hold_timer_font_padding"].value_or(5);
+    FWIVConfig.generalConfig.hold_timer_y_offset = generalC["hold_timer_y_offset"].value_or(5);
+    FWIVConfig.generalConfig.hold_timer_decimals = generalC["hold_timer_decimals"].value_or(6);
+
+    if (FWIVConfig.generalConfig.hold_timer_decimals < 3) FWIVConfig.generalConfig.hold_timer_decimals = 3;
+    // Minimum Value so no-one disables this value
+
+    FWIVConfig.generalConfig.trail_speed = generalC["trail_speed"].value_or(700);
+    FWIVConfig.generalConfig.trail_width = generalC["trail_width"].value_or(60);
+    FWIVConfig.generalConfig.trail_offset = generalC["trail_offset"].value_or(-1);
 
     // Colors
 
-    FWIVConfig.colorConfig.green_fret_color = hexStringToInt(config["colors"]["green_fret"].value_or("#00ff00"));
-    FWIVConfig.colorConfig.red_fret_color = hexStringToInt(config["colors"]["red_fret"].value_or("#ff0000"));
-    FWIVConfig.colorConfig.yellow_fret_color = hexStringToInt(config["colors"]["yellow_fret"].value_or("#ffff00"));
-    FWIVConfig.colorConfig.blue_fret_color = hexStringToInt(config["colors"]["blue_fret"].value_or("#0050ff"));
-    FWIVConfig.colorConfig.orange_fret_color = hexStringToInt(config["colors"]["orange_fret"].value_or("#ff8200"));
-    FWIVConfig.colorConfig.strum_up_color = hexStringToInt(config["colors"]["strum_up_color"].value_or("#9d00ff"));
-    FWIVConfig.colorConfig.strum_down_color = hexStringToInt(config["colors"]["strum_down_color"].value_or("#9d00ff"));
+    FWIVConfig.colorConfig.green_fret_color = hexStringToInt(colorC["green_fret"].value_or("#00ff00"));
+    FWIVConfig.colorConfig.red_fret_color = hexStringToInt(colorC["red_fret"].value_or("#ff0000"));
+    FWIVConfig.colorConfig.yellow_fret_color = hexStringToInt(colorC["yellow_fret"].value_or("#ffff00"));
+    FWIVConfig.colorConfig.blue_fret_color = hexStringToInt(colorC["blue_fret"].value_or("#0050ff"));
+    FWIVConfig.colorConfig.orange_fret_color = hexStringToInt(colorC["orange_fret"].value_or("#ff8200"));
+    FWIVConfig.colorConfig.strum_up_color = hexStringToInt(colorC["strum_up_color"].value_or("#9d00ff"));
+    FWIVConfig.colorConfig.strum_down_color = hexStringToInt(colorC["strum_down_color"].value_or("#9d00ff"));
 
-    FWIVConfig.colorConfig.underlay_transparency = config["colors"]["underlay_transparency"].value_or(0);
+    FWIVConfig.colorConfig.underlay_transparency = colorC["underlay_transparency"].value_or(0);
+    FWIVConfig.colorConfig.background_transparency = colorC["background_transparency"].value_or(0);
+    FWIVConfig.colorConfig.outline_transparency = colorC["outline_transparency"].value_or(255);
+    FWIVConfig.colorConfig.hold_transparency = colorC["hold_transparency"].value_or(190);
+    FWIVConfig.colorConfig.trail_transparency = colorC["trail_transparency"].value_or(190);
+
+    // Inputs
+
+    auto& greenBinding = *bindingC["green_binding"].as_table();
+    auto& redBinding = *bindingC["red_binding"].as_table();
+    auto& yellowBinding = *bindingC["yellow_binding"].as_table();
+    auto& blueBinding = *bindingC["blue_binding"].as_table();
+    auto& orangeBinding = *bindingC["orange_binding"].as_table();
+
+    auto& strumUpBinding = *bindingC["strum_up_binding"].as_table();
+    auto& strumDownBinding = *bindingC["strum_down_binding"].as_table();
+
+    FWIVConfig.bindingConfig.green_binding.joystick_button = greenBinding["joystick_button"].value_or(12);
+    FWIVConfig.bindingConfig.green_binding.keyboard_button_0 = greenBinding["keyboard_button_0"].value_or("1");
+    FWIVConfig.bindingConfig.green_binding.keyboard_button_1 = greenBinding["keyboard_button_1"].value_or("z");
+
+    FWIVConfig.bindingConfig.red_binding.joystick_button = redBinding["joystick_button"].value_or(11);
+    FWIVConfig.bindingConfig.red_binding.keyboard_button_0 = redBinding["keyboard_button_0"].value_or("2");
+    FWIVConfig.bindingConfig.red_binding.keyboard_button_1 = redBinding["keyboard_button_1"].value_or("x");
+
+    FWIVConfig.bindingConfig.yellow_binding.joystick_button = yellowBinding["joystick_button"].value_or(10);
+    FWIVConfig.bindingConfig.yellow_binding.keyboard_button_0 = yellowBinding["keyboard_button_0"].value_or("3");
+    FWIVConfig.bindingConfig.yellow_binding.keyboard_button_1 = yellowBinding["keyboard_button_1"].value_or("c");
+
+    FWIVConfig.bindingConfig.blue_binding.joystick_button = blueBinding["joystick_button"].value_or(9);
+    FWIVConfig.bindingConfig.blue_binding.keyboard_button_0 = blueBinding["keyboard_button_0"].value_or("4");
+    FWIVConfig.bindingConfig.blue_binding.keyboard_button_1 = blueBinding["keyboard_button_1"].value_or("v");
+
+    FWIVConfig.bindingConfig.orange_binding.joystick_button = orangeBinding["joystick_button"].value_or(8);
+    FWIVConfig.bindingConfig.orange_binding.keyboard_button_0 = orangeBinding["keyboard_button_0"].value_or("5");
+    FWIVConfig.bindingConfig.orange_binding.keyboard_button_1 = orangeBinding["keyboard_button_1"].value_or("b");
+
+    FWIVConfig.bindingConfig.strum_up_binding.joystick_button = strumUpBinding["joystick_button"].value_or(6);
+    FWIVConfig.bindingConfig.strum_up_binding.keyboard_button_0 = strumUpBinding["keyboard_button_0"].value_or("Up");
+    FWIVConfig.bindingConfig.strum_up_binding.keyboard_button_1 = strumUpBinding["keyboard_button_1"].value_or("null");
+
+    FWIVConfig.bindingConfig.strum_down_binding.joystick_button = strumDownBinding["joystick_button"].value_or(5);
+    FWIVConfig.bindingConfig.strum_down_binding.keyboard_button_0 = strumDownBinding["keyboard_button_0"].value_or("Down");
+    FWIVConfig.bindingConfig.strum_down_binding.keyboard_button_1 = strumDownBinding["keyboard_button_1"].value_or("null");
 }
