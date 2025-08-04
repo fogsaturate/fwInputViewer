@@ -91,7 +91,7 @@ int main() {
     // }
 
 
-    // SetTraceLogLevel(LOG_WARNING); // This will only log important errors instead of raylib's init prints
+    SetTraceLogLevel(LOG_WARNING); // This will only log important errors instead of raylib's init prints
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
     InitWindow(gCfg.width, gCfg.height, "fwInput Viewer");
 

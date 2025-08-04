@@ -54,13 +54,13 @@ void input_thread(configStruct FWIVConfig, std::vector<Rectangle> recVector) {
 
         sf::Joystick::update();
 
-        bool strumUpHeld;
-        bool strumDownHeld;
-
         if (sf::Joystick::isConnected(bindingC.controller_id)) {
 
             // 100 povY is a strum, and -100 is a strum down
             // it'd be safe to do 90 and -90 incase of weird controller firmware or something, idk
+
+            bool strumUpHeld;
+            bool strumDownHeld;
             float povY = 0.f;
             if (bindingC.dpad_axis) {
                 povY = sf::Joystick::getAxisPosition(bindingC.controller_id, sf::Joystick::Axis::PovY);
