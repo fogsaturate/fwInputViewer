@@ -72,9 +72,39 @@ controller_id = 0 # Change this if you have duplicate guitars OR more than one c
 dpad_axis = true # This setting should only be false if you are on a raphnet, or another HID joystick adapter
 
 [bindings.green_binding]
+joystick_button = 12
+keyboard_button_0 = "1"
+keyboard_button_1 = "Z"
+
+[bindings.red_binding]
 joystick_button = 11
 keyboard_button_0 = "1"
-keyboard_button_1 = "z"
+keyboard_button_1 = "X"
+
+[bindings.yellow_binding]
+joystick_button = 10
+keyboard_button_0 = "1"
+keyboard_button_1 = "C"
+
+[bindings.blue_binding]
+joystick_button = 9
+keyboard_button_0 = "1"
+keyboard_button_1 = "V"
+
+[bindings.orange_binding]
+joystick_button = 8
+keyboard_button_0 = "1"
+keyboard_button_1 = "B"
+
+[bindings.strum_up_binding]
+joystick_button = -1 # -1 = Disabled
+keyboard_button_0 = "Up"
+keyboard_button_1 = "null"
+
+[bindings.strum_down_binding]
+joystick_button = -1 
+keyboard_button_0 = "Down"
+keyboard_button_1 = "null"
 
 # Useful information that you could use
 
