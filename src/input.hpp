@@ -8,7 +8,9 @@
 enum class ControllerBinding {};
 
 struct button_state {
-    int button_bind;
+    int joystick_button;
+    sf::Keyboard::Key key0;
+    sf::Keyboard::Key key1;
     bool held_bool;
     int press_counter;
     float hold_timer;

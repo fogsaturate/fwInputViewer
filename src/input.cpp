@@ -26,10 +26,6 @@ struct button_state {
 
 std::vector<button_state> button_states;
 
-auto& generalC = FWIVConfig.generalConfig;
-auto& bindingC = FWIVConfig.bindingConfig;
-
-
 void input_thread(configStruct FWIVConfig, std::vector<Rectangle> recVector) {
 
     auto& generalC = FWIVConfig.generalConfig;
@@ -72,6 +68,7 @@ void input_thread(configStruct FWIVConfig, std::vector<Rectangle> recVector) {
                 strumDownHeld = (povY < -90);
             }
 
+
             // for (auto& state_of_button: button_states) {
             for (size_t i = 0; i < button_states.size(); i++) {
                 auto& state_of_button = button_states[i];
@@ -81,14 +78,14 @@ void input_thread(configStruct FWIVConfig, std::vector<Rectangle> recVector) {
                 // D-pad Axis checking (for Guitars that also use buttons for strumming, such as Raphnets)
                 if (state_of_button.joystick_button == bindingC.strum_up_binding.joystick_button && bindingC.dpad_axis) {
                     held = strumUpHeld;
-                } else if (state_of_button.joystick_button == bindingC.strum_up_binding.joystick_button && bindingC.dpad_axis) {
+                } else if (state_of_button.joystick_button == bindingC.strum_down_binding.joystick_button && bindingC.dpad_axis) {
                     held = strumDownHeld;
                 } else {
                     held = isBindPressed(bindingC.controller_id, state_of_button.joystick_button, state_of_button.key0, state_of_button.key1);
                 }
 
-
                 if (held) {
+
                     if (!state_of_button.held_bool) { 
                         // Detects first frame the button is held for
                         state_of_button.press_counter++;

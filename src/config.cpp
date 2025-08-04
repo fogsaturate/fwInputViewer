@@ -156,6 +156,8 @@ void checkIfConfigExists() {
     }
 }
 
+void parseConfig(toml::table config);
+
 void loadConfig() {
     checkIfConfigExists();
 
@@ -242,23 +244,23 @@ void parseConfig(toml::table config) {
 
     FWIVConfig.bindingConfig.green_binding.joystick_button = greenBinding["joystick_button"].value_or(12);
     FWIVConfig.bindingConfig.green_binding.keyboard_button_0 = greenBinding["keyboard_button_0"].value_or("1");
-    FWIVConfig.bindingConfig.green_binding.keyboard_button_1 = greenBinding["keyboard_button_1"].value_or("z");
+    FWIVConfig.bindingConfig.green_binding.keyboard_button_1 = greenBinding["keyboard_button_1"].value_or("Z");
 
     FWIVConfig.bindingConfig.red_binding.joystick_button = redBinding["joystick_button"].value_or(11);
     FWIVConfig.bindingConfig.red_binding.keyboard_button_0 = redBinding["keyboard_button_0"].value_or("2");
-    FWIVConfig.bindingConfig.red_binding.keyboard_button_1 = redBinding["keyboard_button_1"].value_or("x");
+    FWIVConfig.bindingConfig.red_binding.keyboard_button_1 = redBinding["keyboard_button_1"].value_or("X");
 
     FWIVConfig.bindingConfig.yellow_binding.joystick_button = yellowBinding["joystick_button"].value_or(10);
     FWIVConfig.bindingConfig.yellow_binding.keyboard_button_0 = yellowBinding["keyboard_button_0"].value_or("3");
-    FWIVConfig.bindingConfig.yellow_binding.keyboard_button_1 = yellowBinding["keyboard_button_1"].value_or("c");
+    FWIVConfig.bindingConfig.yellow_binding.keyboard_button_1 = yellowBinding["keyboard_button_1"].value_or("C");
 
     FWIVConfig.bindingConfig.blue_binding.joystick_button = blueBinding["joystick_button"].value_or(9);
     FWIVConfig.bindingConfig.blue_binding.keyboard_button_0 = blueBinding["keyboard_button_0"].value_or("4");
-    FWIVConfig.bindingConfig.blue_binding.keyboard_button_1 = blueBinding["keyboard_button_1"].value_or("v");
+    FWIVConfig.bindingConfig.blue_binding.keyboard_button_1 = blueBinding["keyboard_button_1"].value_or("V");
 
     FWIVConfig.bindingConfig.orange_binding.joystick_button = orangeBinding["joystick_button"].value_or(8);
     FWIVConfig.bindingConfig.orange_binding.keyboard_button_0 = orangeBinding["keyboard_button_0"].value_or("5");
-    FWIVConfig.bindingConfig.orange_binding.keyboard_button_1 = orangeBinding["keyboard_button_1"].value_or("b");
+    FWIVConfig.bindingConfig.orange_binding.keyboard_button_1 = orangeBinding["keyboard_button_1"].value_or("B");
 
     FWIVConfig.bindingConfig.strum_up_binding.joystick_button = strumUpBinding["joystick_button"].value_or(6);
     FWIVConfig.bindingConfig.strum_up_binding.keyboard_button_0 = strumUpBinding["keyboard_button_0"].value_or("Up");

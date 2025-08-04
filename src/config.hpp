@@ -58,19 +58,19 @@ struct colors_config final {
 
 struct input_binding final {
     int joystick_button = 0;
-    std::string keyboard_button_0 = "a";
-    std::string keyboard_button_1 = "s";
+    std::string keyboard_button_0 = "A";
+    std::string keyboard_button_1 = "S";
 };
 
 struct bindings_config final {
     int controller_id = 0;
     bool dpad_axis = true;
 
-    input_binding green_binding = {12, "1", "Z"};
-    input_binding red_binding = {11, "2", "X"};
-    input_binding yellow_binding = {10, "3", "C"};
-    input_binding blue_binding = {9, "4", "V"};
-    input_binding orange_binding = {8, "5", "B"};
+    input_binding green_binding = {12, "Num1", "Z"};
+    input_binding red_binding = {11, "Num2", "X"};
+    input_binding yellow_binding = {10, "Num3", "C"};
+    input_binding blue_binding = {9, "Num4", "V"};
+    input_binding orange_binding = {8, "Num5", "B"};
 
     input_binding strum_up_binding = {6, "Up", "null"};
     input_binding strum_down_binding = {5, "Down", "null"};
