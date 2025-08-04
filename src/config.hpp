@@ -66,14 +66,14 @@ struct bindings_config final {
     int controller_id = 0;
     bool dpad_axis = true;
 
-    input_binding green_binding = {12, "1", "z"};
-    input_binding red_binding = {11, "2", "x"};
-    input_binding yellow_binding = {10, "3", "c"};
-    input_binding blue_binding = {9, "4", "v"};
-    input_binding orange_binding = {8, "5", "b"};
+    input_binding green_binding = {12, "1", "Z"};
+    input_binding red_binding = {11, "2", "X"};
+    input_binding yellow_binding = {10, "3", "C"};
+    input_binding blue_binding = {9, "4", "V"};
+    input_binding orange_binding = {8, "5", "B"};
 
-    input_binding strum_up_binding = {6, "up_arrow", "null"};
-    input_binding strum_down_binding = {5, "down_arrow", "null"};
+    input_binding strum_up_binding = {6, "Up", "null"};
+    input_binding strum_down_binding = {5, "Down", "null"};
 };
 
 struct configStruct final {

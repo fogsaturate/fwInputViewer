@@ -73,27 +73,27 @@ dpad_axis = true # This setting should only be false if you are on a raphnet, or
 
 [bindings.green_binding]
 joystick_button = 12
-keyboard_button_0 = "1"
+keyboard_button_0 = "Num1"
 keyboard_button_1 = "Z"
 
 [bindings.red_binding]
 joystick_button = 11
-keyboard_button_0 = "1"
+keyboard_button_0 = "Num2"
 keyboard_button_1 = "X"
 
 [bindings.yellow_binding]
 joystick_button = 10
-keyboard_button_0 = "1"
+keyboard_button_0 = "Num3"
 keyboard_button_1 = "C"
 
 [bindings.blue_binding]
 joystick_button = 9
-keyboard_button_0 = "1"
+keyboard_button_0 = "Num4"
 keyboard_button_1 = "V"
 
 [bindings.orange_binding]
 joystick_button = 8
-keyboard_button_0 = "1"
+keyboard_button_0 = "Num5"
 keyboard_button_1 = "B"
 
 [bindings.strum_up_binding]
