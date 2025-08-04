@@ -1,11 +1,12 @@
 #include "keys.hpp"
 #include <SFML/Window/Keyboard.hpp>
+#include <unordered_map>
+#include <string>
 
 // Credits to kermeow for this
 // https://github.com/kermeow/kbmv/blob/main/src/keys.cpp
 
-
-std::map<const char *, sf::Keyboard::Key> KeyCodes = {
+std::unordered_map<std::string, sf::Keyboard::Key> KeyCodes = {
     {"A", sf::Keyboard::Key::A},
     {"B", sf::Keyboard::Key::B},
     {"C", sf::Keyboard::Key::C},
@@ -113,5 +114,6 @@ std::map<const char *, sf::Keyboard::Key> KeyCodes = {
     {"BackSlash", sf::Keyboard::Key::Backslash},
     {"SemiColon", sf::Keyboard::Key::Semicolon},
     {"Return", sf::Keyboard::Key::Enter},
-    {"Quote", sf::Keyboard::Key::Apostrophe}
+    {"Quote", sf::Keyboard::Key::Apostrophe},
+    {"null", sf::Keyboard::Key::Unknown}
 };

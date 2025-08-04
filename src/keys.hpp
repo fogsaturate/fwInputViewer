@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Window/Keyboard.hpp>
-#include <map>
+#include <unordered_map>
+#include <string>
 
-extern std::map<const char *, sf::Keyboard::Key> KeyCodes;
+extern std::unordered_map<std::string, sf::Keyboard::Key> KeyCodes;

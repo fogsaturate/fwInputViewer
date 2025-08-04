@@ -93,58 +93,66 @@ int main() {
     // int rectPadding = config["general"]["rect_padding"].value_or(10);
     // bool rectTopLineOnly = config["general"]["rect_top_line_only"].value_or(false);
 
+
+    // i want my code to be readable, ok
+    auto& gCfg = FWIVConfig.generalConfig;
+    auto& cCfg = FWIVConfig.colorConfig;
+    auto& bCfg = FWIVConfig.bindingConfig;
+
     std::vector<Rectangle> fretVector = CreateFrets(
-        FWIVConfig.generalConfig.rect_width,
-        FWIVConfig.generalConfig.rect_height, 
-        FWIVConfig.generalConfig.rect_padding
+        gCfg.rect_width,
+        gCfg.rect_height, 
+        gCfg.rect_padding
     );
 
     std::vector<Vector2> topLineVector;
     std::vector<Vector2> topLineEndVector;
     if (FWIVConfig.generalConfig.rect_top_line_only) {
         topLineVector = CreateLines(
-            FWIVConfig.generalConfig.rect_width, 
-            FWIVConfig.generalConfig.rect_padding, 
+            gCfg.rect_width, 
+            gCfg.rect_padding, 
             false
         );
 
         topLineEndVector = CreateLines(
-            FWIVConfig.generalConfig.rect_width, 
-            FWIVConfig.generalConfig.rect_padding, 
+            gCfg.rect_width, 
+            gCfg.rect_padding, 
             true
         );
     }
 
-    std::thread inputThread(
-        input_thread,
-        controllerID,
-        dpadAxis,
-        greenBind,
-        redBind,
-        yellowBind,
-        blueBind,
-        orangeBind,
-        strumUpBind,
-        strumDownBind,
-        height,
-        trailWidth,
-        trailSpeed,
-        pollingRate,
-        fretVector
-    );
+    // std::thread inputThread(
+    //     input_thread,
+    //     controllerID,
+    //     dpadAxis,
+    //     greenBind,
+    //     redBind,
+    //     yellowBind,
+    //     blueBind,
+    //     orangeBind,
+    //     strumUpBind,
+    //     strumDownBind,
+    //     height,
+    //     trailWidth,
+    //     trailSpeed,
+    //     pollingRate,
+    //     fretVector
+    // );
+
+    std::thread inputThread(input_thread, FWIVConfig, fretVector);
 
     std::vector<Color> fretColors = {
-        greenColor,    // For button_states and stuff
-        redColor,
-        yellowColor,
-        blueColor,
-        orangeColor, 
-        strumUpColor,
-        strumDownColor
+        cCfg.green_fret_color,    // For button_states and stuff
+        cCfg.red_fret_color,
+        cCfg.yellow_fret_color,
+        cCfg.blue_fret_color,
+        cCfg.orange_fret_color, 
+        cCfg.strum_up_color,
+        cCfg.strum_down_color
     };
 
-    Color underlay = Transparentify(BLACK, underlayTransparency);
-    BlendMode blendMode = underlayTransparency > 0 ? BLEND_ADDITIVE : BLEND_ALPHA; // needed for underlay to work properly
+    Color underlay = Transparentify(BLACK, cCfg.underlay_transparency);
+    BlendMode blendMode = cCfg.underlay_transparency > 0 ? BLEND_ADDITIVE : BLEND_ALPHA; // needed for underlay to work properly
 
     // bool fontLoaded = false;
 
@@ -158,12 +166,12 @@ int main() {
 
     SetTraceLogLevel(LOG_WARNING); // This will only log important errors instead of raylib's init prints
     SetConfigFlags(FLAG_WINDOW_TRANSPARENT);
-    InitWindow(width, height, "fwInput Viewer");
+    InitWindow(gCfg.width, gCfg.height, "fwInput Viewer");
 
-    SetTargetFPS(fps);
+    SetTargetFPS(gCfg.fps);
 
-    Font pressCounterTTF = loadFontFallback(customFont, pressCounterFontSize);
-    Font holdTimerTTF = loadFontFallback(customFont, holdTimerFontSize);
+    Font pressCounterTTF = loadFontFallback(gCfg.custom_font, gCfg.press_counter_font_size);
+    Font holdTimerTTF = loadFontFallback(gCfg.custom_font, gCfg.hold_timer_font_size);
 
     while (!WindowShouldClose()) {
         float dt = GetFrameTime();
@@ -177,19 +185,19 @@ int main() {
         for (size_t i = 0; i < fretVector.size(); i++) {
             DrawRectangleRec(fretVector[i], underlay);
             BeginBlendMode(blendMode);
-            DrawRectangleRec(fretVector[i], Transparentify(fretColors[i], backgroundTransparency));
+            DrawRectangleRec(fretVector[i], Transparentify(fretColors[i], cCfg.background_transparency));
             if (button_states[i].held_bool) {
-                DrawRectangleRec(fretVector[i], Transparentify(fretColors[i], holdTransparency));
+                DrawRectangleRec(fretVector[i], Transparentify(fretColors[i], cCfg.hold_transparency));
             }
             EndBlendMode();
-            if (rectTopLineOnly) {
+            if (gCfg.rect_top_line_only) {
                 DrawLineEx(topLineVector[i], topLineEndVector[i], 5.0, underlay);
                 BeginBlendMode(blendMode);
-                DrawLineEx(topLineVector[i], topLineEndVector[i], 5.0, Transparentify(fretColors[i], outlineTransparency));
+                DrawLineEx(topLineVector[i], topLineEndVector[i], 5.0, Transparentify(fretColors[i], cCfg.outline_transparency));
             } else {
                 DrawRectangleLinesEx(fretVector[i], 5.0, underlay);
                 BeginBlendMode(blendMode);
-                DrawRectangleLinesEx(fretVector[i], 5.0, Transparentify(fretColors[i], outlineTransparency));
+                DrawRectangleLinesEx(fretVector[i], 5.0, Transparentify(fretColors[i], cCfg.outline_transparency));
             }
             EndBlendMode();
 
@@ -198,45 +206,45 @@ int main() {
             int currentPressCounter = button_states[i].press_counter;
             std::string pressCountString = std::to_string(currentPressCounter);
 
-            int fretPadding = pressCounterFontPadding;
+            int fretPadding = gCfg.press_counter_font_padding;
             int maxCounterWidth = fretVector[i].x - fretPadding * 2;
-            int pressCountWidth = MeasureTextEx(pressCounterTTF, pressCountString.c_str(), pressCounterFontSize, pressCounterFontSpacing).x;
+            int pressCountWidth = MeasureTextEx(pressCounterTTF, pressCountString.c_str(), gCfg.press_counter_font_size, gCfg.press_counter_font_spacing).x;
 
-            while (pressCountWidth > fretVector[i].width && pressCounterFontSize > 2) {
-                pressCounterFontSize--;
-                pressCountWidth = MeasureTextEx(pressCounterTTF, pressCountString.c_str(), pressCounterFontSize, pressCounterFontSpacing).x;
+            while (pressCountWidth > fretVector[i].width && gCfg.press_counter_font_size > 2) {
+                gCfg.press_counter_font_size--;
+                pressCountWidth = MeasureTextEx(pressCounterTTF, pressCountString.c_str(), gCfg.press_counter_font_size, gCfg.press_counter_font_spacing).x;
             }
 
             float pressCountX = fretVector[i].x + (fretVector[i].width / 2) - (static_cast<float>(pressCountWidth) / 2);
-            float pressCountY = (fretVector[i].y + (fretVector[i].height / 2) - (static_cast<float>(pressCounterFontSize) / 2)) + pressCountYOffset;
+            float pressCountY = (fretVector[i].y + (fretVector[i].height / 2) - (static_cast<float>(gCfg.press_counter_font_size) / 2)) + gCfg.press_counter_y_offset;
 
             // Held Timer Text Logic
 
             float holdTimer = button_states[i].hold_timer;
             //std::string holdTimerString = std::to_string(holdTimer);
             std::stringstream holdTimerStream;
-            holdTimerStream << std::fixed << std::setprecision(holdTimerDecimals) << holdTimer;
+            holdTimerStream << std::fixed << std::setprecision(gCfg.hold_timer_decimals) << holdTimer;
             std::string holdTimerString = holdTimerStream.str();
 
-            int padding = holdTimerFontPadding;
+            int padding = gCfg.hold_timer_font_padding;
             int maxTimerWidth = fretVector[i].x - padding * 2;
-            int holdTimerWidth = MeasureTextEx(holdTimerTTF, holdTimerString.c_str(), holdTimerFontSize, holdTimerFontSpacing).x;
+            int holdTimerWidth = MeasureTextEx(holdTimerTTF, holdTimerString.c_str(), gCfg.hold_timer_font_size, gCfg.hold_timer_font_spacing).x;
 
-            while (holdTimerWidth > fretVector[i].width && holdTimerFontSize > 2) {
-                holdTimerFontSize--;
-                holdTimerWidth = MeasureTextEx(holdTimerTTF, holdTimerString.c_str(), holdTimerFontSize, holdTimerFontSpacing).x;
+            while (holdTimerWidth > fretVector[i].width && gCfg.hold_timer_font_size > 2) {
+                gCfg.hold_timer_font_size--;
+                holdTimerWidth = MeasureTextEx(holdTimerTTF, holdTimerString.c_str(), gCfg.hold_timer_font_size, gCfg.hold_timer_font_spacing).x;
             }
 
             float holdTimerX = fretVector[i].x + (fretVector[i].width / 2) - (static_cast<float>(holdTimerWidth) / 2);
-            float holdTimerY = (fretVector[i].y - 20) + holdTimerYOffset;
+            float holdTimerY = (fretVector[i].y - 20) + gCfg.hold_timer_y_offset;
 
             // Text Render Call
 
-            DrawTextEx(pressCounterTTF, pressCountString.c_str(), {pressCountX, pressCountY}, pressCounterFontSize, pressCounterFontSpacing, WHITE);
-            DrawTextEx(holdTimerTTF, holdTimerString.c_str(), {holdTimerX, holdTimerY}, holdTimerFontSize, holdTimerFontSpacing, WHITE);
+            DrawTextEx(pressCounterTTF, pressCountString.c_str(), {pressCountX, pressCountY}, gCfg.press_counter_font_size, gCfg.press_counter_font_spacing, WHITE);
+            DrawTextEx(holdTimerTTF, holdTimerString.c_str(), {holdTimerX, holdTimerY}, gCfg.hold_timer_font_size, gCfg.hold_timer_font_spacing, WHITE);
 
             for (auto& rect: button_states[i].trail_vector) {
-                DrawRectangleRec(rect, Transparentify(fretColors[i], trailTransparency));
+                DrawRectangleRec(rect, Transparentify(fretColors[i], cCfg.trail_transparency));
             }
         }
         EndDrawing();

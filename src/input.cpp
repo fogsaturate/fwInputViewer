@@ -10,22 +10,12 @@
 #include "createitem.hpp"
 #include "config.hpp"
 #include "keys.hpp"
+#include "keypress.hpp"
 
 std::atomic<bool> running(true);
 
-enum class ControllerBinding {
-    Green,
-    Red,
-    Yellow,
-    Blue,
-    Orange,
-    StrumUp,
-    StrumDown,
-    Unknown
-};
-
 struct button_state {
-    ControllerBinding button_bind;
+    int joystick_button;
     sf::Keyboard::Key key0;
     sf::Keyboard::Key key1;
     bool held_bool;
@@ -36,77 +26,23 @@ struct button_state {
 
 std::vector<button_state> button_states;
 
-// int getJoystickBind( // couldn't really think of another way to optimize this LOL
-//     ControllerBinding button,
-//     int green_bind,
-//     int red_bind,
-//     int yellow_bind,
-//     int blue_bind,
-//     int orange_bind,
-//     int strum_up_bind,
-//     int strum_down_bind
-// ) {
-//     switch (button) {
-//         case ControllerBinding::Green:     
-//             return green_bind;
-//         case ControllerBinding::Red:       
-//             return red_bind;
-//         case ControllerBinding::Yellow:    
-//             return yellow_bind;
-//         case ControllerBinding::Blue:      
-//             return blue_bind;
-//         case ControllerBinding::Orange:    
-//             return orange_bind;
-//         case ControllerBinding::StrumUp:   
-//             return strum_up_bind;
-//         case ControllerBinding::StrumDown: 
-//             return strum_down_bind;
-//         default:                          
-//             return -1;
-//     }
-// }
+auto& generalC = FWIVConfig.generalConfig;
+auto& bindingC = FWIVConfig.bindingConfig;
 
-// Detects if a bind from the controller is pressed, or a keyboard input
-bool isBindPressed(
-    int controller_id, 
-    int joystick_button,
-    sf::Keyboard::Key key0,
-    sf::Keyboard::Key key1,
-) {
 
-}
-
-void input_thread(
-    configStruct FWIVConfig,
-    // int controller_id,
-    // bool dpad_axis, 
-    // int green_bind,
-    // int red_bind,
-    // int yellow_bind,
-    // int blue_bind,
-    // int orange_bind,
-    // int strum_up_bind,
-    // int strum_down_bind,
-
-    // // For trailing rectangles
-    // int screen_height, // This is for optimization reasons. (Delete the trail after its off-screen)
-    // int trail_width,
-    // int trail_speed, // How fast the rectangles go.
-    // int polling_rate,
-    std::vector<Rectangle> recVector // For fretVector
-) {
+void input_thread(configStruct FWIVConfig, std::vector<Rectangle> recVector) {
 
     auto& generalC = FWIVConfig.generalConfig;
     auto& bindingC = FWIVConfig.bindingConfig;
 
-    // Initializing the bindings first
-    button_states.push_back({ControllerBinding::Green, false, 0, 0.f});
-    button_states.push_back({ControllerBinding::Red, false, 0, 0.f});
-    button_states.push_back({ControllerBinding::Yellow, false, 0, 0.f});
-    button_states.push_back({ControllerBinding::Blue, false, 0, 0.f});
-    button_states.push_back({ControllerBinding::Orange, false, 0, 0.f});
-    button_states.push_back({ControllerBinding::StrumUp, false, 0, 0.f});
-    button_states.push_back({ControllerBinding::StrumDown, false, 0, 0.f});
+    // yeah idk how else ima do this
+    button_states.push_back({bindingC.green_binding.joystick_button, translateKey(bindingC.green_binding.keyboard_button_0), translateKey(bindingC.green_binding.keyboard_button_1), false, 0, 0.f});
+    button_states.push_back({bindingC.red_binding.joystick_button, translateKey(bindingC.red_binding.keyboard_button_0), translateKey(bindingC.red_binding.keyboard_button_1), false, 0, 0.f});
+    button_states.push_back({bindingC.yellow_binding.joystick_button, translateKey(bindingC.yellow_binding.keyboard_button_0), translateKey(bindingC.yellow_binding.keyboard_button_1), false, 0, 0.f});
+    button_states.push_back({bindingC.blue_binding.joystick_button, translateKey(bindingC.blue_binding.keyboard_button_0), translateKey(bindingC.blue_binding.keyboard_button_1), false, 0, 0.f});
+    button_states.push_back({bindingC.orange_binding.joystick_button, translateKey(bindingC.orange_binding.keyboard_button_0), translateKey(bindingC.orange_binding.keyboard_button_1), false, 0, 0.f});
+    button_states.push_back({bindingC.strum_up_binding.joystick_button, translateKey(bindingC.strum_up_binding.keyboard_button_0), translateKey(bindingC.strum_up_binding.keyboard_button_1), false, 0, 0.f});
+    button_states.push_back({bindingC.strum_down_binding.joystick_button, translateKey(bindingC.strum_down_binding.keyboard_button_0), translateKey(bindingC.strum_down_binding.keyboard_button_1), false, 0, 0.f});
 
     // sf::Clock clock;
     auto lastTime = std::chrono::steady_clock::now();
@@ -116,7 +52,7 @@ void input_thread(
         std::chrono::duration<float> elapsed = currentTime - lastTime;
 
         float deltaTime = elapsed.count();
-        float moveDistance = deltaTime * trail_speed;
+        float moveDistance = deltaTime * generalC.trail_speed;
 
         lastTime = currentTime;
 
@@ -125,38 +61,30 @@ void input_thread(
         bool strumUpHeld;
         bool strumDownHeld;
 
-        float povY = 0.f;
-        if (dpad_axis) {
-            povY = sf::Joystick::getAxisPosition(controller_id, sf::Joystick::Axis::PovY);
-            strumUpHeld = (povY > 90);
-            strumDownHeld = (povY < -90);
-        }
+        if (sf::Joystick::isConnected(bindingC.controller_id)) {
 
-        if (sf::Joystick::isConnected(controller_id)) {
+            // 100 povY is a strum, and -100 is a strum down
+            // it'd be safe to do 90 and -90 incase of weird controller firmware or something, idk
+            float povY = 0.f;
+            if (bindingC.dpad_axis) {
+                povY = sf::Joystick::getAxisPosition(bindingC.controller_id, sf::Joystick::Axis::PovY);
+                strumUpHeld = (povY > 90);
+                strumDownHeld = (povY < -90);
+            }
+
             // for (auto& state_of_button: button_states) {
             for (size_t i = 0; i < button_states.size(); i++) {
                 auto& state_of_button = button_states[i];
 
-                int joystick_button = getJoystickBind(
-                    state_of_button.button_bind, 
-                    green_bind, 
-                    red_bind, 
-                    yellow_bind, 
-                    blue_bind, 
-                    orange_bind, 
-                    strum_up_bind, 
-                    strum_down_bind
-                );
-
                 bool held = false;
 
                 // D-pad Axis checking (for Guitars that also use buttons for strumming, such as Raphnets)
-                if (state_of_button.button_bind == ControllerBinding::StrumUp && dpad_axis) {
+                if (state_of_button.joystick_button == bindingC.strum_up_binding.joystick_button && bindingC.dpad_axis) {
                     held = strumUpHeld;
-                } else if (state_of_button.button_bind == ControllerBinding::StrumDown && dpad_axis) {
+                } else if (state_of_button.joystick_button == bindingC.strum_up_binding.joystick_button && bindingC.dpad_axis) {
                     held = strumDownHeld;
                 } else {
-                    held = sf::Joystick::isButtonPressed(controller_id, joystick_button);
+                    held = isBindPressed(bindingC.controller_id, state_of_button.joystick_button, state_of_button.key0, state_of_button.key1);
                 }
 
 
@@ -168,14 +96,14 @@ void input_thread(
                         state_of_button.held_bool = true;
 
                         // Trail Logic
-                        Rectangle trail_rec = CreateTrail(recVector[i], trail_speed, trail_width);
+                        Rectangle trail_rec = CreateTrail(recVector[i], generalC.trail_speed, generalC.trail_width);
                         state_of_button.trail_vector.push_back(trail_rec);
                     } 
 
                     // Detects every frame the button is held for
                     if (!state_of_button.trail_vector.empty()) {
                         // I am going to clamp this at .2 pixels since some tick perfect inputs aren't even rendered lol
-                        state_of_button.trail_vector.back().height = std::max(state_of_button.hold_timer * trail_speed, 0.5f);
+                        state_of_button.trail_vector.back().height = std::max(state_of_button.hold_timer * generalC.trail_speed, 0.5f);
                     }
 
                     state_of_button.hold_timer += deltaTime;
@@ -195,12 +123,12 @@ void input_thread(
                     state_of_button.trail_vector.back().y += moveDistance;
                 }
 
-                while (!state_of_button.trail_vector.empty() && state_of_button.trail_vector.front().y >= screen_height) {
+                while (!state_of_button.trail_vector.empty() && state_of_button.trail_vector.front().y >= generalC.height) {
                     state_of_button.trail_vector.erase(state_of_button.trail_vector.begin());
                 }
             }
         }
         // This will probably run at 100% CPU usage if I don't limit the polling rate !!!!! :)
-        std::this_thread::sleep_for(std::chrono::microseconds(1000000 / polling_rate));
+        std::this_thread::sleep_for(std::chrono::microseconds(1000000 / generalC.polling_rate));
     }
 }

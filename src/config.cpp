@@ -70,13 +70,11 @@ trail_transparency = 190 # 0 - 255
 [bindings]
 controller_id = 0 # Change this if you have duplicate guitars OR more than one controller, and 0 doesn't work.
 dpad_axis = true # This setting should only be false if you are on a raphnet, or another HID joystick adapter
-green_binding = 12
-red_binding = 11
-yellow_binding = 10
-blue_binding = 9
-orange_binding = 8
-strum_up_binding = 8 # Strum bindings aren't used if dpad_axis is true
-strum_down_binding = 5
+
+[bindings.green_binding]
+joystick_button = 11
+keyboard_button_0 = "1"
+keyboard_button_1 = "z"
 
 # Useful information that you could use
 
