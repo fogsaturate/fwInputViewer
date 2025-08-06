@@ -11,18 +11,7 @@
 #include <sstream>
 #include <iostream>
 
-// Color hexStringToInt(std::string hexString) {
-//     hexString = hexString.substr(1); // get rid of the # at the start (reading from toml config)
-
-//     Color color;
-//     // Basically what I am doing here is splitting the string into 3 pieces, then converting to hex
-//     color.r = std::stoi(hexString.substr(0, 2), nullptr, 16);
-//     color.g = std::stoi(hexString.substr(2, 2), nullptr, 16);
-//     color.b = std::stoi(hexString.substr(4, 2), nullptr, 16);
-//     color.a = 255;
-
-//     return color;
-// }
+// This is so if the font doesn't load, it loads the default font without erroring
 
 Font loadFontFallback(const std::string& path, int fontSize) {
     Font font = LoadFontEx(path.c_str(), fontSize, 0, 250);
@@ -39,14 +28,14 @@ int main() {
     // Read from config first before init
     loadConfig();
 
-    // i want my code to be readable, ok
+    // these are the type of variable names i would use in lua lol
     auto& gCfg = FWIVConfig.generalConfig;
     auto& cCfg = FWIVConfig.colorConfig;
     auto& bCfg = FWIVConfig.bindingConfig;
 
     std::vector<Rectangle> fretVector = CreateFrets(
         gCfg.rect_width,
-        gCfg.rect_height, 
+        gCfg.rect_height,
         gCfg.rect_padding
     );
 
@@ -99,9 +88,9 @@ int main() {
 
     Font pressCounterTTF = loadFontFallback(gCfg.custom_font, gCfg.press_counter_font_size);
     Font holdTimerTTF = loadFontFallback(gCfg.custom_font, gCfg.hold_timer_font_size);
+    Font ipsTTF = loadFontFallback(gCfg.custom_font, 32);
 
     while (!WindowShouldClose()) {
-        float dt = GetFrameTime();
 
         BeginDrawing();
         ClearBackground(BLANK);
@@ -109,6 +98,8 @@ int main() {
         // ClearBackground(BLACK);
 
         // std::vector<Rectangle> fretVector = CreateFrets();
+
+        int clockVectorSize = 0;
 
         for (size_t i = 0; i < fretVector.size(); i++) {
 
@@ -174,7 +165,18 @@ int main() {
                 DrawRectangleRec(rect, Transparentify(fretColors[i], cCfg.trail_transparency));
             }
 
+            clockVectorSize += button_states[i].clock_vector.size();
+
         }
+
+        std::string clockVectorSizeString = std::to_string(clockVectorSize);
+        int ipsNumberWidth = MeasureTextEx(ipsTTF, clockVectorSizeString.c_str(), 32, 3).x;
+        int ipsWidth = MeasureTextEx(ipsTTF, "IPS", 32.0, 3.0).x;
+        float ipsNumberX = 600 + (ipsWidth / 2) - (ipsNumberWidth / 2);
+
+        DrawTextEx(ipsTTF, "IPS", {600,35}, 32, 3, WHITE);
+        DrawTextEx(ipsTTF, clockVectorSizeString.c_str(), {ipsNumberX, 65}, 32, 3, WHITE);
+
         EndDrawing();
     }
 

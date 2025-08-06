@@ -23,7 +23,7 @@ Color hexStringToInt(std::string hexString) {
 
 void createDefaultConfig() {
     std::string default_config = R"([general]
-width = 610 # I wouldn't recommend changing this yet!! (I did not implement scaling but I will soon!)
+width = 680 # I wouldn't recommend changing this yet!! (I did not implement scaling but I will soon!)
 height = 500
 fps = 60 # Change this to whatever you want, the inputs are frame independent! :)
 polling_rate = 2000 # A good middle ground would be 2000 to capture as much inputs as possible
@@ -97,12 +97,12 @@ keyboard_button_0 = "Num5"
 keyboard_button_1 = "B"
 
 [bindings.strum_up_binding]
-joystick_button = -1 # -1 = Disabled
+joystick_button = -1 # Anything Negative is disabled
 keyboard_button_0 = "Up"
 keyboard_button_1 = "null"
 
 [bindings.strum_down_binding]
-joystick_button = -1 
+joystick_button = -2
 keyboard_button_0 = "Down"
 keyboard_button_1 = "null"
 

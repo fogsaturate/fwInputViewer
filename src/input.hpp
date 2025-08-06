@@ -4,6 +4,7 @@
 #include <vector>
 #include <raylib.h>
 #include "config.hpp"
+#include <chrono>
 
 enum class ControllerBinding {};
 
@@ -15,6 +16,7 @@ struct button_state {
     int press_counter;
     float hold_timer;
     std::vector<Rectangle> trail_vector;
+    std::vector<std::chrono::steady_clock::time_point> clock_vector;
 };
 
 extern std::atomic<bool> running;

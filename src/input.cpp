@@ -22,6 +22,7 @@ struct button_state {
     int press_counter;
     float hold_timer;
     std::vector<Rectangle> trail_vector;
+    std::vector<std::chrono::steady_clock::time_point> clock_vector; // for IPS
 };
 
 std::vector<button_state> button_states;
@@ -40,7 +41,6 @@ void input_thread(configStruct FWIVConfig, std::vector<Rectangle> recVector) {
     button_states.push_back({bindingC.strum_up_binding.joystick_button, translateKey(bindingC.strum_up_binding.keyboard_button_0), translateKey(bindingC.strum_up_binding.keyboard_button_1), false, 0, 0.f});
     button_states.push_back({bindingC.strum_down_binding.joystick_button, translateKey(bindingC.strum_down_binding.keyboard_button_0), translateKey(bindingC.strum_down_binding.keyboard_button_1), false, 0, 0.f});
 
-    // sf::Clock clock;
     auto lastTime = std::chrono::steady_clock::now();
 
     while (running.load()) {
@@ -62,12 +62,12 @@ void input_thread(configStruct FWIVConfig, std::vector<Rectangle> recVector) {
             bool strumUpHeld;
             bool strumDownHeld;
             float povY = 0.f;
+
             if (bindingC.dpad_axis) {
                 povY = sf::Joystick::getAxisPosition(bindingC.controller_id, sf::Joystick::Axis::PovY);
                 strumUpHeld = (povY > 90);
                 strumDownHeld = (povY < -90);
             }
-
 
             // for (auto& state_of_button: button_states) {
             for (size_t i = 0; i < button_states.size(); i++) {
@@ -95,7 +95,14 @@ void input_thread(configStruct FWIVConfig, std::vector<Rectangle> recVector) {
                         // Trail Logic
                         Rectangle trail_rec = CreateTrail(recVector[i], generalC.trail_speed, generalC.trail_width);
                         state_of_button.trail_vector.push_back(trail_rec);
-                    } 
+
+                        // IPS Logic
+
+                        // I am creating a clock every first frame a button is pressed, then will delete later when it hits 1 second
+                        auto input_clock = std::chrono::steady_clock::now();
+                        state_of_button.clock_vector.push_back(input_clock);
+
+                    }
 
                     // Detects every frame the button is held for
                     if (!state_of_button.trail_vector.empty()) {
@@ -122,6 +129,22 @@ void input_thread(configStruct FWIVConfig, std::vector<Rectangle> recVector) {
 
                 while (!state_of_button.trail_vector.empty() && state_of_button.trail_vector.front().y >= generalC.height) {
                     state_of_button.trail_vector.erase(state_of_button.trail_vector.begin());
+                }
+
+                // IPS Delete if reaches 1 second
+
+                while (!state_of_button.clock_vector.empty()) {
+
+                    auto now = std::chrono::steady_clock::now();
+
+                    std::chrono::duration<double> duration = std::chrono::duration_cast<std::chrono::duration<double>>(now - state_of_button.clock_vector.front());
+
+                    if (duration.count() >= 1.0) {
+                        state_of_button.clock_vector.erase(state_of_button.clock_vector.begin());
+                    } else {
+                        break;
+                    }
+
                 }
             }
         }
